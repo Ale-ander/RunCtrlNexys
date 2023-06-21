@@ -1,10 +1,10 @@
 #!/usr/bin/python
 
 """
-File : ListaCMD.py
-Author: SER
-Data  : 03/11/2021
-Version : 3.0
+File : ComandiGUIpy
+Author: Alessandro
+Data  : 12/06/2023
+Version : 1.0
 """
 
 
@@ -195,7 +195,7 @@ class RunControl:
                     fdato = 24
                     pass
                 if fdato >= 20:
-                    self.Peak0 = int(fdato/5)
+                    self.Peak0 = int(fdato/2.4)
                 else:
                     self.Peak0 = 24
                 self.Port.Send_CMD(0x21,self.Peak0)
@@ -207,7 +207,7 @@ class RunControl:
                     fdato = 24
                     pass
                 if fdato >= 20:
-                    self.Peak1 = int(fdato/5)
+                    self.Peak1 = int(fdato/2.4)
                 else:
                     self.Peak1 = 24
                 self.Port.Send_CMD(0x22,self.Peak1)
@@ -302,11 +302,9 @@ class RunControl:
                     self.PowerEnable = self.PowerEnable & 0xfffd
                 self.Port.Send_CMD(4, self.PowerEnable)
 
-                pulserfrequenza = float(config['DEFAULT']['Pulsfreq'].split(" ")[0])
-
-                if pulserfrequenza <= 1000 and pulserfrequenza != 0:
-                    self.Pulser = int(1000/pulserfrequenza)
-                elif pulserfrequenza == 0:
+                if int(config['DEFAULT']['Pulsfreq']) <= 1000 and int(config['DEFAULT']['Pulsfreq']) != 0:
+                    self.Pulser = int(1000/int(config['DEFAULT']['Pulsfreq']))
+                elif int(config['DEFAULT']['Pulsfreq']) == 0:
                     self.Pulser = 0
                 self.Port.Send_CMD(0x07,self.Pulser)
 
@@ -334,15 +332,15 @@ class RunControl:
                     self.Misc =  self.Misc & 0x000f
                 self.Port.Send_CMD(9,self.Misc)
 
-                if config['DEFAULT']['CLK A/M']  == "Automatic":
+                if config['DEFAULT']['CLK A/M']  == "CLK Automatic":
                     self.CLKsafe =  self.CLKsafe | 0x0002
-                elif config['DEFAULT']['CLK A/M']  == "Manual":
+                elif config['DEFAULT']['CLK A/M']  == "CLK Manual":
                     self.CLKsafe =  self.CLKsafe & 0x0001
                 self.Port.Send_CMD(11,self.CLKsafe)
 
-                if dato  == "External":
+                if config['DEFAULT']['CLK E/I']  == "CLK External":
                     self.CLKsafe =  self.CLKsafe | 0x0001
-                elif dato  == "Internal":
+                elif config['DEFAULT']['CLK E/I']  == "CLK Internal":
                     self.CLKsafe =  self.CLKsafe & 0x0002
                 self.Port.Send_CMD(11,self.CLKsafe)
 
@@ -362,7 +360,7 @@ class RunControl:
                     self.Delay0 = int(int(config['DEFAULT']['Delay0'])/5)
                 else:
                     self.Delay0 = 10
-                self.Port.Send_CMD(0x34,self.Delay1)
+                self.Port.Send_CMD(0x34,self.Delay0)
 
                 if int(config['DEFAULT']['Delay1']) <= 1275:
                     self.Delay1 = int(int(config['DEFAULT']['Delay1'])/5)
@@ -436,9 +434,9 @@ class RunControl:
         elif list(self.DatiLetture.items())[4][0] == Cmd :
             intNum = int(Valore)
             if intNum == 0:
-                self.Pfreq = "OFF"
+                self.Pfreq = 0
             else:
-               self.Pfreq = '{} Hz'.format(1000/intNum)
+               self.Pfreq = 1000/intNum
 
         # - codifica start @200MHz counter
         elif list(self.DatiLetture.items())[5][0] == Cmd:
@@ -535,7 +533,7 @@ class RunControl:
         # - codifica cmd FREQ_CH1 ricevuto
         elif list(self.DatiLetture.items())[11][0] == Cmd : #
             intNum = int(Valore)
-            if intNum <0XFFFE:
+            if intNum < 0XFFFE:
                 self.FreCh1 = intNum
             elif intNum == 0XFFFE :
                 self.FreCh1 = "ALERT! Overflow"
@@ -545,12 +543,12 @@ class RunControl:
         # - codifica cmd Picco ch0 ricevuto
         elif list(self.DatiLetture.items())[13][0] == Cmd :
             intNum = int(Valore)
-            self.Peak0 = intNum*5
+            self.Peak0 = intNum * 2.4
 
         # - codifica cmd Picco ch1 ricevuto
         elif list(self.DatiLetture.items())[14][0] == Cmd:
             intNum = int(Valore)
-            self.Peak1 = intNum * 5
+            self.Peak1 = intNum * 2.4
 
         # - codifica cmd TempoMorto ricevuto
         elif list(self.DatiLetture.items())[12][0] == Cmd:
