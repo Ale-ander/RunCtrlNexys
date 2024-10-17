@@ -332,7 +332,7 @@ class HighVoltageApp(cmd2.Cmd):
       self.poutput(f'{"PMT s/n": <25}: {info[1]}')
       self.poutput(f'{"HV s/n": <25}: {info[2]}')
       self.poutput(f'{"FEB s/n": <25}: {info[3]}')
-      self.poutput(f'{"Vref": <25}: {self.hv.getVref()} mV') 
+      self.poutput(f'{"Vref": <25}: {round(self.hv.getVref()/10)} mV')
       self.poutput(f'{"Calibration slope": <25}: {m}')
       self.poutput(f'{"Calibration offset": <25}: {q}')
       self.poutput(f'{"Calibration discrim.": <25}: {int(t)} mV')
@@ -363,7 +363,7 @@ class HighVoltageApp(cmd2.Cmd):
    @cmd2.with_argparser(probe_parser)
    @cmd2.with_category("High Voltage commands")
    def do_probe(self, args: argparse.Namespace) -> None:
-      for addr in range(0,21):
+      for addr in range(1,21):
          found = self.hv.probe(self.port, addr)
          if(found):
             self.ansi_print(self.bright_green(f'{addr}'))

@@ -11,17 +11,14 @@ def crc323check(arr) -> bool:           # prende in input un array contenente le
             crc = crc32(arr[i]) ^ crc
         else:
             crc = crc32((arr[i] & 0x3FFFFFF) + 0xC0000000) ^ crc
-
     if crc == testvalue:
         return True
     else:
-        print('{} =/= {}'.format(crc, testvalue))
-        [print(bin(arr)) for arr in arr]
         return False
 
 
 def main():
-    print(crc323check([0b10000000000000000000100101001100, 0b10000110100100001000001011111, 0b11110011011111111111000000000000]))
+    print(crc323check([0x8003a100, 0x08050841, 0xf8a10e33]))
 
 if __name__ == "__main__":
     main()

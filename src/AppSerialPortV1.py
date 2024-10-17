@@ -83,10 +83,8 @@ class COMPort(StoreSerial):
                                         timeout=2, 
                                         stopbits=serial.STOPBITS_ONE
                                         )
-            # print(">Periferica ",self.mCom," OK")
             return True
         except :
-            # print(">Seriale non TROVATA ")
             return False
 
     def PortDisponibili(self):
